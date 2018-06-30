@@ -1,0 +1,30 @@
+<!--
+-->
+<launch>
+
+  # Bag filename
+  <arg name="bag_file" />
+  <arg name="start" default="0"/>
+  <arg name="camera" default="/front"/>
+  <arg name="robot_frame" default="/base_link"/>
+  <arg name="tolerance" default="0.15"/>
+  
+  # Use simulation time 
+  <param name="use_sim_time" value="true" />
+
+  # Bag file
+  <node name="bag_player" type="play" pkg="rosbag" args="$(arg bag_file) --clock -s $(arg start)" />
+  
+  # Uncompress depth
+  <node name="republish_depth" type="republish" pkg="image_transport" args="compressedDepth in:=$(arg camera)/depth_registered/image_raw raw out:=$(arg camera)/depth_registered/image_raw"/>
+  
+  # Launch plane detector
+  <node name="test_wall_detector" type="test_wall_detector" pkg="plane_detector" output="screen" >
+   <param name="camera" value="$(arg camera)/depth_registered"/>
+   <param name="link_1" value="$(arg robot_frame)"/>
+   <param name="link_2" value="$(arg camera)_depth_optical_frame"/>
+  </node>
+  
+<!--   <node name="rviz" type="rviz" pkg="rviz"/> -->
+  
+</launch>

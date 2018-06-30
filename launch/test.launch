@@ -1,0 +1,30 @@
+<!--
+-->
+<launch>
+
+  # Bag filename
+  <arg name="bag_file" />
+  <arg name="start" default="0"/>
+  <arg name="camera" default="/front"/>
+  <arg name="scale" default="1.0"/>
+  <arg name="param_file" default=""/>
+  
+  # Use simulation time fro TFs
+  <param name="use_sim_time" value="true" />
+
+  # Bag file
+  <node name="bag_player" type="play" pkg="rosbag" args="$(arg bag_file) --clock -s $(arg start)" output="screen"/>
+  
+  # Uncompress depth
+  <node name="republish_depth" type="republish" pkg="image_transport" args="compressedDepth in:=$(arg camera)/depth_registered/image_raw raw out:=$(arg camera)/depth_registered/image_raw"/>
+  
+  # Launch plane detector
+  <node name="test_plane_detector" type="test_detector" pkg="plane_detector" output="screen" args="$(arg param_file)" >
+   <param name="camera" value="$(arg camera)/depth_registered"/>
+   <param name="link_name" value="$(arg camera)_depth_optical_frame"/>
+   <param name="scale" value="$(arg scale)"/>
+  </node>
+  
+<!--   <node name="rviz" type="rviz" pkg="rviz"/> -->
+  
+</launch>
