@@ -20,6 +20,19 @@
 #include <dynamic_reconfigure/server.h>
 #include <plane_detector/DetectorConfig.h>
 
+#include <exception>
+
+#define __MIN_RANGE__ 0.3
+#define __MAX_RANGE__ 10.0
+
+struct UnknownDepthException:public std::exception {
+  const char *what() const throw()
+  {
+    return "Unknown Depth Exception";
+  }
+  
+};
+
 enum PixelStatus {
   UNPROCESSED = -3, IN_R_PRIMA, IN_QUEUE
 };
@@ -52,8 +65,6 @@ public:
   void publishMarkers(ros::Publisher &pub, const std::string &frame_id, double lifetime = 0.1) const;
   
   void publishPointCloud(ros::Publisher &pub, const std::string &frame_id, double lifetime = 0.1) const;
-   
-  
   
   inline bool isInitialized() {return _initialized;}
   
@@ -109,8 +120,8 @@ protected:
   //! @brief Adds pixels to region and adds its nearest neighbors to the queue (modifying status_vec)
   void addPixelToRegion(int index, int curr_region_id);
   
-  Eigen::Vector3d get3DPoint(int i, int j) const;
-  Eigen::Vector3d get3DPoint(int index) const;
+  Eigen::Vector3d get3DPoint(int i, int j) const throw(UnknownDepthException);
+  Eigen::Vector3d get3DPoint(int index) const throw(UnknownDepthException);
   //! @brief Gets the depth of a depth image
   //! @return THe depth value or -1.0 if the data is not valid
   double getDepth(int i, int j) const;
@@ -362,19 +373,22 @@ void PlaneDetector::setCameraParameters(const boost::array< double, 9 >& k_)
   _initialized = true;
 }
 
-double PlaneDetector::getDepth(int i, int j) const
+double PlaneDetector::getDepth(int i, int j) const 
 {
   double ret_val = -1.0;
   if (_downsample) {
     i *= 2;
     j *= 2;
   }
+  
+  if (i >= cvbDepth->image.cols || j >= cvbDepth->image.rows)
+    return -1.0;
 //   std::cout << "Data: " << cvbDepth->image.at<float>(i,j) << " ";
   if(float_image)
     ret_val = cvbDepth->image.at<float>(j, i); /// CAUTION!!!! the indices in cv::Mat are row, cols (elsewhere cols, rows)
   else
     ret_val = cvbDepth->image.at<u_int16_t>(j, i)*0.001;
-  if(ret_val < 0.3 || ret_val > 10.0)
+  if(ret_val < __MIN_RANGE__ || ret_val > __MAX_RANGE__)
   {
     ret_val = -1.0;
   }
@@ -382,7 +396,7 @@ double PlaneDetector::getDepth(int i, int j) const
 }
 
 
-Eigen::Vector3d PlaneDetector::get3DPoint(int i, int j) const
+Eigen::Vector3d PlaneDetector::get3DPoint(int i, int j) const throw(UnknownDepthException)
 {
   Eigen::Vector3d pt;
   
@@ -391,16 +405,18 @@ Eigen::Vector3d PlaneDetector::get3DPoint(int i, int j) const
     i *= 2;
     j *= 2;
   }
-  if(pt[2] > 0.3 && pt[2] < 10.0)
+  if(pt[2] > __MIN_RANGE__ && pt[2] < __MAX_RANGE__)
   {
     pt[0] = (float)(i - cx) * pt[2] * kx;
     pt[1] = (float)(j - cy) * pt[2] * ky;
+  } else {
+    throw UnknownDepthException();
   }
 
   return pt;
 }
 
-Eigen::Vector3d PlaneDetector::get3DPoint(int index) const
+Eigen::Vector3d PlaneDetector::get3DPoint(int index) const throw(UnknownDepthException)
 {
   return get3DPoint(index%width, index/width);
 }

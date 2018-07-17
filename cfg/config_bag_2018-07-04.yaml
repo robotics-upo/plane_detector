@@ -1,0 +1,25 @@
+!!python/object/new:dynamic_reconfigure.encoding.Config
+dictitems:
+  delta: 0.1998
+  downsample: true
+  epsilon: 1.0e-06
+  gamma: 0.02
+  groups: !!python/object/new:dynamic_reconfigure.encoding.Config
+    dictitems:
+      delta: 0.1998
+      downsample: true
+      epsilon: 1.0e-06
+      gamma: 0.02
+      groups: !!python/object/new:dynamic_reconfigure.encoding.Config
+        state: []
+      id: 0
+      name: Default
+      parameters: !!python/object/new:dynamic_reconfigure.encoding.Config
+        state: []
+      parent: 0
+      state: true
+      theta: 3556
+      type: ''
+    state: []
+  theta: 3556
+state: []
