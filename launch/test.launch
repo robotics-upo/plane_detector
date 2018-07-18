@@ -19,7 +19,7 @@
   <node name="republish_depth" type="republish" pkg="image_transport" args="compressedDepth in:=$(arg camera)/depth_registered/image_raw raw out:=$(arg camera)/depth_registered/image_raw"/>
   
   # Launch plane detector
-  <node name="test_plane_detector" type="test_detector" pkg="plane_detector" output="screen" args="$(arg param_file)" >
+  <node name="test_plane_detector" type="test_detector" pkg="plane_detector" output="screen" args="$(arg param_file)"> <!-- launch-prefix="xterm -e gdb - -args"> -->
    <param name="camera" value="$(arg camera)/depth_registered"/>
    <param name="link_name" value="$(arg camera)_depth_optical_frame"/>
    <param name="scale" value="$(arg scale)"/>

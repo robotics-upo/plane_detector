@@ -1,4 +1,4 @@
-#include "plane_detector/plane_detector.hpp"
+#include "plane_detector/plane_detector_ros.hpp"
 #include <rosbag/bag.h>
 #include <rosbag/view.h>
 #include <sensor_msgs/Image.h>
@@ -19,7 +19,7 @@ using namespace cv;
 void imgCallback(const sensor_msgs::ImageConstPtr &im);
 void infoCallback(const sensor_msgs::CameraInfoConstPtr &info);
 
-PlaneDetector *p_det = NULL;
+PlaneDetectorROS *p_det = NULL;
 ros::Publisher marker_pub;
 ros::Publisher pointcloud_pub;
 
@@ -63,7 +63,7 @@ int main(int argc, char **argv)
   marker_pub = nh.advertise<visualization_msgs::Marker>("plane_marker", 2);
   pointcloud_pub = nh.advertise<sensor_msgs::PointCloud>("plane_pointcloud", 2);
   
-  p_det = new PlaneDetector(nh, pn);
+  p_det = new PlaneDetectorROS(nh, pn);
   
   ros::spin();
 }
@@ -84,7 +84,7 @@ void imgCallback(const sensor_msgs::ImageConstPtr& im)
 //       marker_pub.publish(p.getMarker(link_name, i, scale));
 //     }
     p_det->publishMarkers(marker_pub, link_name);
-    p_det->publishPointCloud(pointcloud_pub, link_name);
+//     p_det->publishPointCloud(pointcloud_pub, link_name);
   }
   
   

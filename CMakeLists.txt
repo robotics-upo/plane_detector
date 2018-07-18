@@ -37,6 +37,7 @@ generate_dynamic_reconfigure_options(cfg/Detector.cfg)
 
 catkin_package(
   CATKIN_DEPENDS compressed_depth_image_transport dynamic_reconfigure  image_transport message_filters message_runtime rosbag   roscpp   rospy   sensor_msgs   std_msgs   tf visualization_msgs
+#  LIBRARIES ${PROJECT_NAME}
   DEPENDS eigen3 OpenCV
 )
 

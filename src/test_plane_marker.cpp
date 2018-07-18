@@ -1,4 +1,4 @@
-#include "plane_detector/plane_detector.hpp"
+#include "plane_detector/plane_detector_ros.hpp"
 #include <rosbag/bag.h>
 #include <rosbag/view.h>
 #include "ros/ros.h"
@@ -25,7 +25,7 @@ int main(int argc, char **argv)
   std::string link("/base_link");
   pn.getParam("/link_name", link);
   
-  DetectedPlane p;
+  DetectedPlaneROS p;
   if (argc > 4) {
     p.v(0) = stof(argv[1]);
     p.v(1) = stof(argv[2]);

@@ -1,4 +1,4 @@
-#include "plane_detector/plane_detector.hpp"
+#include "plane_detector/plane_detector_ros.hpp"
 #include <rosbag/bag.h>
 #include <rosbag/view.h>
 #include <sensor_msgs/Image.h>
@@ -64,7 +64,7 @@ int main(int argc, char **argv)
   std::string depth_topic = camera + "/image_raw";
   std::string info_topic = camera + "/camera_info";
   
-  PlaneDetector p(delta, epsilon, gamma, theta);
+  PlaneDetectorROS p(delta, epsilon, gamma, theta);
                                                    
   try {
     bag.open(string(argv[1]), rosbag::bagmode::Read);
