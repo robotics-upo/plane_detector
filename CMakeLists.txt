@@ -36,13 +36,14 @@ set(CMAKE_BUILD_TYPE Release)
 generate_dynamic_reconfigure_options(cfg/Detector.cfg)
 
 catkin_package(
+  INCLUDE_DIRS include
   CATKIN_DEPENDS compressed_depth_image_transport dynamic_reconfigure  image_transport message_filters message_runtime rosbag   roscpp   rospy   sensor_msgs   std_msgs   tf visualization_msgs
 #  LIBRARIES ${PROJECT_NAME}
   DEPENDS eigen3 OpenCV
 )
 
 include_directories(
-  ${catkin_INCLUDE_DIRS}, ${EIGEN3_INCLUDE_DIR} , ${OpenCV2_INCLUDE_DIRS}, ${Boost_INCLUDE_DIRS} , include
+  ${catkin_INCLUDE_DIRS}, ${EIGEN3_INCLUDE_DIR} , ${OpenCV2_INCLUDE_DIRS}, ${Boost_INCLUDE_DIRS}, include
 )
 
 ###########
@@ -69,4 +70,11 @@ target_link_libraries(test_detector_marker ${catkin_LIBRARIES} ${OpenCV_LIBRARIE
 add_dependencies(test_detector_bag ${PROJECT_NAME}_gencfg )
 add_dependencies(test_detector ${PROJECT_NAME}_gencfg )
 add_dependencies(test_detector_marker ${PROJECT_NAME}_gencfg )
+
+## Install stuff
+install(DIRECTORY include/${PROJECT_NAME}
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.hpp"
+  PATTERN ".svn" EXCLUDE
+)
 
