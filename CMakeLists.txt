@@ -58,6 +58,9 @@ include_directories(
 )
 
 ## Declare a C++ executable
+add_executable(test_plane src/test_plane.cpp)
+target_link_libraries(test_plane ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${Boost_LIBRARIES})
+
 add_executable(test_detector_bag src/test_plane_detector_bag.cpp)
 target_link_libraries(test_detector_bag ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${Boost_LIBRARIES})
 # 

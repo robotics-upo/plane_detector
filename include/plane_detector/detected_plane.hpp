@@ -21,6 +21,9 @@ public:
   Eigen::Matrix4d cov;
   double weight;
   
+  DetectedPlane affine_inv(const Eigen::Matrix3d& rot_, const Eigen::Vector3d& trans_) const;
+  DetectedPlane affine_inv2(const Eigen::Matrix3d& rot_, const Eigen::Vector3d& trans_) const;
+  
   DetectedPlane affine(const Eigen::Matrix3d &rot, const Eigen::Vector3d &trans) const;
   
   DetectedPlane affine(const Eigen::Affine3d &T) const
@@ -45,7 +48,7 @@ public:
   
   virtual std::string toString(bool verbose = false) const;
   
-  void calculateCovariance(double std_dev = 0.02);
+  void calculateCovariance(double std_dev = 0.02, bool pathak_way = true);
   
 protected:
   //! @brief Composes the covariance of the plane according to Fdez-Jimenez et al (IROS 2014)
@@ -84,10 +87,12 @@ _Matrix_Type_ pseudoInverse(const _Matrix_Type_ &a, double epsilon = std::numeri
   return svd.matrixV() *  (svd.singularValues().array().abs() > tolerance).select(svd.singularValues().array().inverse(), 0).matrix().asDiagonal() * svd.matrixU().adjoint();
 }
 
-void DetectedPlane::calculateCovariance(double std_dev)
+void DetectedPlane::calculateCovariance(double std_dev, bool pathak_way)
 {
-//   calculateCovariance_pathak(std_dev);
-  calculateCovariance_jimenez(std_dev);
+  if (pathak_way)
+    calculateCovariance_pathak(std_dev);
+  else
+    calculateCovariance_jimenez(std_dev);
   weight = fabs(weight);
 }
 
@@ -143,24 +148,62 @@ void DetectedPlane::calculateCovariance_pathak(double std_dev)
   weight = 1/cov.determinant();
 }
 
-// NOTE: If the transform translates coordinates r2 into the transform 1 r1 (r2 = rot*r1 + trans) --> this function gives n2 and d2 (in coordinate transform 2) from a plane in transform 1
-DetectedPlane DetectedPlane::affine(const Eigen::Matrix3d& rot_, const Eigen::Vector3d& trans_) const
+// NOTE: If the transform translates coordinates r2 into the transform 1 r1 (r1 = rot*r2 + trans) 
+// then this function gives n2 and d2 (in coordinate transform 2) from a plane in transform 1
+DetectedPlane DetectedPlane::affine_inv(const Eigen::Matrix3d& rot_, const Eigen::Vector3d& trans_) const
 {
   DetectedPlane ret;
   
   ret.v = rot_.transpose() * v;
-  ret.r_g = rot_.inverse()*(r_g - trans_);
-  
-  
-//   ret.d = d - v.transpose()*rot_.transpose()*trans_;
   ret.d = d - v.transpose()*trans_;
-//   std::cout << "new_method d = " << ret.d << "\tOld method: " << r_g.dot( ret.v) << std::endl;
   
   ret.makeDPositive();
   
   return ret;
 }
 
+DetectedPlane DetectedPlane::affine_inv2(const Eigen::Matrix3d &rot, const Eigen::Vector3d& trans) const
+{
+  DetectedPlane pf;
+  Eigen::Matrix4d U = Eigen::Matrix4d::Zero();
+  
+  Eigen::Vector4d e_t;
+  
+  
+  for (int i = 0; i < 3; i++) {
+    U(3, i) = -trans(i);
+    e_t(i) = v(i);
+    for (int j = 0; j < 3;j++) {
+      U(i,j) = rot(j,i);
+    }
+  }
+  U(3,3) = 1.0;
+  e_t(3) = d;
+  
+  e_t = U*e_t;
+  for (int i = 0; i < 3;i++) {
+    pf.v(i) = e_t(i);
+  }
+  pf.d = e_t(3);
+  pf.makeDPositive();
+  
+  return pf;
+}
+
+
+// NOTE: If the transform translates coordinates r2 into the transform 1 r1 (r1 = rot*r2 + trans) 
+// then this function gives n2 and d2 (in coordinate transform 2) from a plane in transform 1
+DetectedPlane DetectedPlane::affine(const Eigen::Matrix3d& rot_, const Eigen::Vector3d& trans_) const
+{
+  DetectedPlane ret;
+  
+  ret.v = rot_*v;
+  ret.d = d + ret.v.transpose()*trans_;
+  
+  ret.makeDPositive();
+  
+  return ret;
+}
 
 
 #endif

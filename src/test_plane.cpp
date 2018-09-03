@@ -6,7 +6,7 @@ using namespace std;
 int main(int argc, char **argv) 
 {
   if (argc < 3) {
-    cerr << "Use: " << argv[0] << " <plane_file> <tf_file> [r_g file]\n";
+    cerr << "Use: " << argv[0] << " <plane_file> <tf_file>\n";
     return -1;
   }
   
@@ -14,8 +14,6 @@ int main(int argc, char **argv)
   Eigen::Matrix3d rot;
   Eigen::Vector3d v;
   try {
-    ifstream ifs(argv[1]);
-    ifs >> p.v(0) >> p.v(1) >> p.v(2) >> p.d; 
     ifstream ifs2(argv[2]);
     // Get the guess TF from file
     for (int i = 0; i < 3; i++) {
@@ -24,22 +22,27 @@ int main(int argc, char **argv)
       }
     }
     ifs2 >> v(0) >> v(1) >> v(2); 
+    cout << "Rot:" << rot << endl;
+    cout << "Trans: " << v.transpose() << endl;
+    ifstream ifs(argv[1]);
+    while (ifs.good() && !ifs.eof()) {
+      ifs >> p.v(0) >> p.v(1) >> p.v(2) >> p.d; 
+      cout << "Plane: " << p.toString() << endl;
+      
+      DetectedPlane rotated = p.affine(rot, v);
+      cout << "Rotated plane: " << rotated.toString() << endl;
+      cout << "Inverse Rotated plane: " << p.affine_inv(rot, v).toString() << endl;
+      cout << "Inverse Rotated plane 2: " << p.affine_inv2(rot, v).toString() << endl;
+      
+      
+      cout << "Rotated plane and inverse rotated (should be equal to the original: " << rotated.affine_inv(rot, v).toString() << endl;
+      cout << "Rotated plane and inverse rotated (should be equal to the original: " << rotated.affine_inv2(rot, v).toString() << endl;
+      
+    }
   } catch (exception &e) {
-    cerr << "Could not load parameter file";
-  }
-  cout << "Rot:" << rot << endl;
-  cout << "Trans: " << v.transpose() << endl;
-  
-  
-  if (argc > 3) {
-    ifstream ifs(argv[3]);
-    ifs >> p.r_g(0) >> p.r_g(1) >> p.r_g(2); 
-    cout << "R_g = " << p.r_g.transpose() << endl;
+    
   }
   
-  
-  cout << "Plane: " << p.toString() << endl;
-  cout << "Rotated plane: " << p.affine(rot, v).toString() << endl;
 
   return 0;
 }
