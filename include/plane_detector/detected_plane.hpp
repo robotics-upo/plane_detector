@@ -7,6 +7,8 @@
 #include <eigen3/Eigen/Jacobi>
 #include <iostream>
 
+#include <vector>
+
 class DetectedPlane:public Plane {
 public:
   // Detecting data

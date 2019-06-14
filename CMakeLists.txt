@@ -40,7 +40,7 @@ catkin_package(
   INCLUDE_DIRS include
   CATKIN_DEPENDS compressed_depth_image_transport dynamic_reconfigure  image_transport message_filters message_runtime rosbag   roscpp   rospy   sensor_msgs   std_msgs   tf visualization_msgs
 #  LIBRARIES ${PROJECT_NAME}
-  DEPENDS eigen3 OpenCV
+  DEPENDS OpenCV
 )
 
 include_directories(
@@ -71,9 +71,14 @@ target_link_libraries(test_detector ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${Bo
 add_executable(test_detector_marker src/test_plane_marker.cpp)
 target_link_libraries(test_detector_marker ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${Boost_LIBRARIES})
 
+# 
+add_executable(test_floor_detector src/test_floor_detector.cpp)
+target_link_libraries(test_floor_detector ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${Boost_LIBRARIES})
+
 add_dependencies(test_detector_bag ${PROJECT_NAME}_gencfg )
 add_dependencies(test_detector ${PROJECT_NAME}_gencfg )
 add_dependencies(test_detector_marker ${PROJECT_NAME}_gencfg )
+add_dependencies(test_floor_detector ${PROJECT_NAME}_gencfg )
 
 ## Install stuff
 install(DIRECTORY include/${PROJECT_NAME}
