@@ -43,7 +43,7 @@ public:
   
   void publishMarkers(ros::Publisher &pub, const std::string &frame_id, double lifetime = 0.1) const;
   
-  void publishPointCloud(ros::Publisher& pub, const std::__cxx11::string& frame_id, double lifetime = 0.1);
+  void publishPointCloud(ros::Publisher& pub, const std::string& frame_id, double lifetime = 0.1);
   
 protected:
   cv_bridge::CvImageConstPtr _cvbDepth;
