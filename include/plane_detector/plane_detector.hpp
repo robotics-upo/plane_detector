@@ -96,8 +96,8 @@ protected:
   //! @brief Adds pixels to region and adds its nearest neighbors to the queue (modifying status_vec)
   void addPixelToRegion(int index, int _curr_region_id);
   
-  Eigen::Vector3d get3DPoint(int i, int j) const throw(UnknownDepthException);
-  Eigen::Vector3d get3DPoint(int index) const throw(UnknownDepthException);
+  Eigen::Vector3d get3DPoint(int i, int j) const;
+  Eigen::Vector3d get3DPoint(int index) const;
   //! @brief Gets the depth of a depth image
   //! @return THe depth value or -1.0 if the data is not valid
   double getDepth(int i, int j) const;
@@ -333,7 +333,7 @@ double PlaneDetector::getDepth(int i, int j) const
 }
 
 
-Eigen::Vector3d PlaneDetector::get3DPoint(int i, int j) const throw(UnknownDepthException)
+Eigen::Vector3d PlaneDetector::get3DPoint(int i, int j) const
 {
   Eigen::Vector3d pt;
   
@@ -353,7 +353,7 @@ Eigen::Vector3d PlaneDetector::get3DPoint(int i, int j) const throw(UnknownDepth
   return pt;
 }
 
-Eigen::Vector3d PlaneDetector::get3DPoint(int index) const throw(UnknownDepthException)
+Eigen::Vector3d PlaneDetector::get3DPoint(int index) const
 {
   return get3DPoint(index%_width, index/_width);
 }
