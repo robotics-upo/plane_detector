@@ -40,6 +40,8 @@ DetectedPlaneROS::DetectedPlaneROS(const DetectedPlane& p)
   n_points = p.n_points; // Number of points 
   cov = p.cov;
   weight = p.weight;
+  this->d = p.d;
+  this->v = p.v;
 }
 
 

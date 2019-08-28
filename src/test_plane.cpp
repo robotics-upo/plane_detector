@@ -1,4 +1,5 @@
 #include "plane_detector/detected_plane.hpp"
+#include "plane_detector/ros_detected_plane.hpp"
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -38,6 +39,9 @@ int main(int argc, char **argv)
       
       cout << "Rotated plane and inverse rotated (should be equal to the original: " << rotated.affine_inv(rot, v).toString() << endl;
       cout << "Rotated plane and inverse rotated (should be equal to the original: " << rotated.affine_inv2(rot, v).toString() << endl;
+
+      DetectedPlaneROS r_p (p);
+      cout << "DetectedPlaneROS" << r_p.toString() << endl;
       
     }
   } catch (exception &e) {
