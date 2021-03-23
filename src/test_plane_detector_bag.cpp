@@ -5,10 +5,7 @@
 #include <sensor_msgs/CompressedImage.h>
 #include <sensor_msgs/image_encodings.h>
 #include <cv_bridge/cv_bridge.h>
-#include <opencv/cvwimage.h>
-#include <opencv/highgui.h>
 #include <opencv2/imgproc/imgproc.hpp>
-#include <cv.h>
 #include <boost/foreach.hpp>
 #ifndef foreach
 #define foreach BOOST_FOREACH
@@ -197,7 +194,8 @@ sensor_msgs::Image::Ptr decodeCompressedDepthImage(const sensor_msgs::Compressed
       // Decode raw image
       try
       {
-        cv_ptr->image = cv::imdecode(imageData, CV_LOAD_IMAGE_UNCHANGED);
+        
+        cv_ptr->image = cv::imdecode(imageData, IMREAD_UNCHANGED); //CV_LOAD_IMAGE_UNCHANGED);
       }
       catch (cv::Exception& e)
       {
