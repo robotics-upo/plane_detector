@@ -49,14 +49,26 @@ public:
   }
   
   void setCameraParameters(const boost::array< double, 9 >& k_);
+
+  inline void setCameraParameters(const float focal_length, const float cx, const float cy) {
+    _kx = 1 / focal_length;
+    _ky = 1 / focal_length;
+    _cx = cx;
+    _cy = cy;
+  }
   
   inline bool isInitialized() {return _initialized;}
   
   inline void setFloatImage(bool new_value) {_float_image = new_value;}
   
 protected:
-  double _delta, _epsilon, _gamma; // Dynamically reconfigurable
-  int _theta;
+  // Parameters from the paper Poppinga: 
+  double _delta; // Maximum neighbor distance (0.2 is OK)
+  double _epsilon; // Maximum MSE (1e-4)
+  double _gamma;  // Maximum distance to plane
+  int _theta; // Minimum number of points of the segmented plane
+
+
   std::vector <DetectedPlane> _detected_planes; // Vector de IDs
   std::vector <int> _detected_ids; // Contiene todos los IDs que son considerados planos
   std::vector<int> _status_vec; // Relaciona los puntos de la imagen con una region
