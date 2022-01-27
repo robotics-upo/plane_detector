@@ -20,6 +20,8 @@ This library can be used standalone without using ROS. In this way the module ac
   
 - inline std::vector<DetectedPlane> getPlanes() const; (gets the actual information of the detected planes)
 
+To test the standalone version there is the test_plane_standalone.cpp example. It can read a depth image from the TUM dataset: https://vision.in.tum.de/data/datasets/rgbd-dataset and detects planes in that image.
+
 Also, a testing ROS node is provided in src/test_plane_detector.cpp. In this case, the node subscribes to a depth stream from a RGB-D sensor (tested with OpenNI2 compatible devices) and generates markers and outputs the detected planes via stdout. 
 
 Future work should include the output of a specialized plane message for making it easier to use it in other modules. Any help is appreciated!!
