@@ -55,6 +55,7 @@ public:
     _ky = 1 / focal_length;
     _cx = cx;
     _cy = cy;
+    _initialized = true;
   }
   
   inline bool isInitialized() {return _initialized;}
