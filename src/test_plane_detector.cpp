@@ -48,8 +48,6 @@ int main(int argc, char **argv)
   }
   
   ROS_INFO("Parameters: %f, %f, %f, %d", delta, epsilon, gamma, theta);
-//   ROS_INFO("Std dev of the sensor: %d", std_dev);
-  
   pn.getParam("camera", camera);
   pn.getParam("link_name", link_name);
   pn.getParam("scale", scale);
@@ -73,20 +71,14 @@ void imgCallback(const sensor_msgs::ImageConstPtr& im)
   if (initialized) {
     p_det->detectPlanes(*im);
     
-    ROS_INFO("In imgCallback!!");
-    
+    ROS_INFO("In imgCallback. Image ID: %d", im->header.seq);
     printPlanes(p_det->getPlanes());
     
-//     for (int i = 0; i < p_det->getPlanes().size(); i++) 
-//     {
-//       const DetectedPlane &p = p_det->getPlanes().at(i);
-//       marker_pub.publish(p.getMarker(link_name, i, scale));
-//     }
     p_det->publishMarkers(marker_pub, link_name);
-//     p_det->publishPointCloud(pointcloud_pub, link_name);
+    p_det->publishPointCloud(pointcloud_pub, link_name);
+  } else{
+    ROS_WARN("Image not process, Camera Info unavailable");
   }
-  
-  
 }
 
 void infoCallback(const sensor_msgs::CameraInfoConstPtr& info)
