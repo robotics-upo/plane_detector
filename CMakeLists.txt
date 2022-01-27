@@ -67,6 +67,9 @@ target_link_libraries(test_detector_bag ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} 
 # 
 add_executable(test_detector src/test_plane_detector.cpp)
 target_link_libraries(test_detector ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${Boost_LIBRARIES})
+#
+add_executable(test_detector_standalone src/test_plane_detector_standalone.cpp)
+target_link_libraries(test_detector_standalone ${OpenCV_LIBRARIES})
 # 
 add_executable(test_detector_marker src/test_plane_marker.cpp)
 target_link_libraries(test_detector_marker ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${Boost_LIBRARIES})
