@@ -52,7 +52,7 @@ public:
   
   inline bool isInitialized() {return _initialized;}
   
-  inline bool setFloatImage(bool new_value) {_float_image = new_value;}
+  inline void setFloatImage(bool new_value) {_float_image = new_value;}
   
 protected:
   double _delta, _epsilon, _gamma; // Dynamically reconfigurable
